@@ -1,0 +1,30 @@
+# -*- conf -*-
+OASISFormat: 0.4
+Name:        ocaml_mailing_list
+Version:     0.0.1
+Synopsis:    Generate the OCaml mailing list
+Authors:     Edgar Aroutiounian <edgar.factorial@gmail.com>
+Maintainers: Edgar Aroutiounian <edgar.factorial@gmail.com>
+Homepage:    https://github.com/fxfactorial/ocaml-mailing-list
+License:     BSD-3-clause
+Plugins:     META (0.4), DevFiles (0.4)
+BuildTools: ocamlbuild
+
+Description: OCaml mailing list
+
+PostBuildCommand: bash compile_for_node.sh; ./ocaml_mailing_list
+PostCleanCommand: rm -f ocaml_mailing_list
+
+Executable mailing_list
+  Path: src
+  BuildTools:ocamlbuild
+  ByteOpt: -g -w +a-4-40..42-44-45-48
+  MainIs : mailer.ml
+  install: false
+  CompiledObject: byte
+  BuildDepends: reactjs, nodejs
+
+SourceRepository master
+  Type:     git
+  Location: https://github.com/fxfactorial/ocaml-mailing-list.git
+  Browser:  https://github.com/fxfactorial/ocaml-mailing-list

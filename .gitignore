@@ -1,0 +1,31 @@
+.tern-port
+*.annot
+*.cmo
+*.cma
+*.cmi
+*.cmt
+*.a
+*.o
+*.cmx
+*.cmxs
+*.cmxa
+
+# ocamlbuild working directory
+_build/
+
+# ocamlbuild targets
+*.byte
+*.native
+
+# oasis generated files
+setup.data
+setup.log
+T
+node_modules
+examples/tutorial_high_level
+examples/tutorial_high_level.js
+reactjs_based_examples/basic/code
+reactjs_based_examples/basic/code.js
+scratch.js
+code.js
+code
