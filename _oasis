@@ -25,11 +25,7 @@ Executable mailing_list
   MainIs : mailer.ml
   install: false
   CompiledObject: byte
-  BuildDepends:
-    reactjs,
-    nodejs.high_level_lwt,
-    ppx_deriving_yojson (>= 3.0),
-    ppx_deriving (>= 4.0)
+  BuildDepends: reactjs, nodejs.high_level_lwt, yojson
 
 SourceRepository master
   Type:     git
