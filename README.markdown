@@ -6,7 +6,19 @@ bindings to `ReactJS` for the HTML modeling and `nodejs` for the
 actual generation of HTML.
 
 Here's the source code, should be an inspiration for OCaml bindings to
-ReactJS usage.
+ReactJS usage and nodejs as well. 
+
+You'll need two packages: 
+
+```shell
+$ opam pin add -y reactjs https://github.com/fxfactorial/ocaml-reactjs
+$ opam pin add -y nodejs https://github.com/fxfactorial/ocaml-nodejs
+```
+
+Then a plain invocation of `make` should work and will build an
+example `index.html`.
+
+# Source code
 
 ```ocaml
 open StdLabels
