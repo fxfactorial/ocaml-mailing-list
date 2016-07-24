@@ -1,4 +1,6 @@
 S src
 B _build/src
 FLG -w +a-4-40..42-44-45-48
-PKG reactjs nodejs
+PKG reactjs nodejs.high_level_lwt
+PKG ppx_deriving_yojson ppx_deriving yojson
+

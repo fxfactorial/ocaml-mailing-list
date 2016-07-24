@@ -7,12 +7,14 @@ Authors:     Edgar Aroutiounian <edgar.factorial@gmail.com>
 Maintainers: Edgar Aroutiounian <edgar.factorial@gmail.com>
 Homepage:    https://github.com/fxfactorial/ocaml-mailing-list
 License:     BSD-3-clause
+OCamlVersion:  >= 4.02.0
 Plugins:     META (0.4), DevFiles (0.4)
 BuildTools: ocamlbuild
 
 Description: OCaml mailing list
 
-PostBuildCommand: bash compile_for_node.sh; ./ocaml_mailing_list
+PostBuildCommand:
+  bash compile_for_node.sh; ./ocaml_mailing_list mailing_example.json
 PostCleanCommand: rm -f ocaml_mailing_list
 
 Executable mailing_list
@@ -22,7 +24,11 @@ Executable mailing_list
   MainIs : mailer.ml
   install: false
   CompiledObject: byte
-  BuildDepends: reactjs, nodejs
+  BuildDepends:
+    reactjs,
+    nodejs.high_level_lwt,
+    ppx_deriving_yojson (>= 3.0),
+    ppx_deriving (>= 4.0)
 
 SourceRepository master
   Type:     git

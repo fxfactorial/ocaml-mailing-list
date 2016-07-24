@@ -1,62 +1,49 @@
 open StdLabels
+open Reactjs
+open Lwt.Infix
+open Nodejs_high_level_lwt
 
-let quadratic_calculator = Reactjs.(
+let email json = DOM.(
     make_class_spec
-      ~initial_state:(fun ~this -> object%js
-                       val a = 1.0 val b = 3.0 val c = -3.0
-                     end)
       (fun ~this -> let open Infix in
-        let handle_input_change =
-          fun ~key event ->
-            let new_state =
-              ([(key,
-                 event##.target##.value |> Js.parseFloat |> Js.number_of_float)] >>>
-               object%js end)
-            in
-            this##setState new_state
-        in
-        let (a, b, c) = this##.state##.a, this##.state##.b, this##.state##.c in
-        let root = Js.math##sqrt ((Js.math##pow b 2.0) -. 4.0 *. a *. c) in
-        let denominator = 2.0 *. a in
-        let (x1, x2) = (-.b +. root) /. denominator, (-.b -. root) /. denominator in
-        let input_label ~key init_value = DOM.(
-            make ~tag:`label
-              [Text (Printf.sprintf "%s: " key);
-               Elem (make ~elem_spec:(object%js
-                       val type_ = !*"number"
-                       val value = !^init_value
-                       val onChange = handle_input_change ~key
-                     end) ~tag:`input [])]
-          )
-        in
-        let label_row l = l |> List.map ~f:(fun (key, value) ->
-            [Elem (input_label ~key value); Elem (DOM.make ~tag:`br [])]
-          ) |> List.flatten
-        in
-        let equation_row = DOM.(
-            [Elem (make ~tag:`em [Text "ax"]); Elem (make ~tag:`sup [Text "2"]);
-             Text " + "; Elem (make ~tag:`em [Text "bx"]); Text " + ";
-             Elem (make ~tag:`em [Text "c"]); Text " = 0"])
-        in
-        DOM.(make ~tag:`div
-               [Elem (make ~tag:`strong equation_row );
-                Elem (make ~tag:`h4 [Text "Solve for ";
-                                     Elem (make ~tag:`em [Text "x"])]);
-                Elem (make ~tag:`p
-                        (label_row [("a", a); ("b", b); ("c", c)] @
-                         [Text "x: ";
-                          Elem (make ~tag:`strong
-                                  [Text (Printf.sprintf "%f %f" x1 x2)])]))
-               ]))
-    |> create_class
+
+        make ~tag:`html []
+
+      )|> create_class
   )
 
+type mailing_list = { date_range : string;
+                      articles : post list; } [@@deriving of_yojson]
+and post = {author : string;
+            title : string;
+            content : string; }
+
+let () =
+  Lwt.async (fun () ->
+      let p = Nodejs_high_level.process in
+      let args = p#arguments in
+
+      if List.length args <> 3
+      then begin
+        "Must provide input file of posts for HTML generation"
+        |> prerr_endline;
+        p#exit 1
+        end;
+
+      let posts_file = List.nth args 2 in
+      print_endline posts_file;
+
+      Fs.read_file posts_file >|= fun (error, data) ->
+      let j = Yojson.Safe.from_string data#to_string in
+
+      Yojson.Safe.to_string j |> print_endline;
+
+      match mailing_list_of_yojson j with
+      | Result.Ok right ->
+        print_endline "everything okay"
+      | Result.Error left ->
+        print_endline @@ "ERROR: " ^ left ;
+        p#exit 1
 
 
-
-let () = Reactjs.(
-    let a = create_element_from_class quadratic_calculator in
-    Firebug.console##log Reactjs.react_dom_server;
-    Firebug.console##log a;
-    print_endline "Hello World"
-  )
+    )
