@@ -20,7 +20,8 @@ example `index.html`.
 
 # Result 
 
-The generated example HTML should look like:
+The generated example HTML, a mobile-responsive and completely self
+contained HTML email, should look like:
 
 ![img](./newsletter_generated.png)
 
