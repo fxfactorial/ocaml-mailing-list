@@ -14,7 +14,8 @@ BuildTools: ocamlbuild
 Description: OCaml mailing list
 
 PostBuildCommand:
-  bash compile_for_node.sh; ./ocaml_mailing_list mailing_example.json
+  bash compile_for_node.sh; ./ocaml_mailing_list mailing_example.json >| index.html
+
 PostCleanCommand: rm -f ocaml_mailing_list
 
 Executable mailing_list
