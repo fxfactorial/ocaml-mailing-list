@@ -159,58 +159,112 @@ let newsletter mailing_l = DOM.(
     let open Infix in
     make_class_spec
       (fun ~this ->
-        let head = make ~tag:`head [
-            Elem (make ~elem_spec:(object%js
-                    val name = !*"viewport"
-                    val content = !*"width=device-width"
-                  end) ~tag:`meta []);
-            Elem (make ~elem_spec:(object%js
-                    val httpEquiv = !*"Content-Type"
-                    val content = !*"text/html; charset=UTF-8"
-                  end) ~tag:`meta []);
-            Elem newsletter_style;
-          ]
-        in
-        let mailing_list_header =
-          Elem (make ~tag:`h3
-                  [Text
-                     (Printf.sprintf
-                        "OCaml mailing list for: %s"
-                        mailing_l.date_range)])
-        in
-        let table =
-          make ~elem_spec:(object%js
-            val className = !*"body-wrap"
-            val style = (object%js val backgroundColor = !*"#f6f6f6" end)
-          end) ~tag:`table [
-            Elem (make ~tag:`tr [
-                Elem (make ~tag:`td []);
-                Elem (make ~elem_spec:(object%js
-                        val className = !*"container"
-                        val style = (object%js
-                          val backgroundColor = !*"#FFFFFF"
-                        end)
-                      end)
-                        ~tag:`td [
-                        mailing_list_header;
-                        Elem (make ~tag:`hr []);
-                        Elem (make ~tag:`br []);
-                        Elem (make ~tag:`p [Text "Hello"]);
-                        Elem (make ~tag:`p [Text "World"]);
-                      ]);
+         let head = make ~tag:`head [
+             Elem (make ~elem_spec:(object%js
+                     val name = !*"viewport"
+                     val content = !*"width=device-width"
+                   end) ~tag:`meta []);
+             Elem (make ~elem_spec:(object%js
+                     val httpEquiv = !*"Content-Type"
+                     val content = !*"text/html; charset=UTF-8"
+                   end) ~tag:`meta []);
+             Elem newsletter_style;
+           ]
+         in
+         let mailing_list_header =
+           Elem (make
+                   ~elem_spec:(object%js
+                     val style = (object%js
+                       val textAlign = !*"center"
+                     end)
+                   end)
+                   ~tag:`h2
+                   [Text
+                      (Printf.sprintf
+                         "OCaml mailing list for: %s"
+                         mailing_l.date_range)])
+         in
 
-              ])
-          ]
-        in
-        let body =
-          make
-            ~elem_spec:(object%js
-              val style = (object%js val backgroundColor = !*"#f6f6f6" end)
-            end)
-            ~tag:`body [Elem table]
+         let posts =
+           mailing_l.articles |> List.map ~f:(fun {author; title; content} ->
+               let title_line =
+                 Text (Printf.sprintf "%s announced: %s" author title)
+               in
+               Elem (make ~tag:`p
+                       [Elem (make ~tag:`p [
+                            Elem (make ~tag:`h3 [title_line]);
+                            Elem (make ~tag:`br []);
+                            Elem (make ~tag:`p [Text content])]
+                          )])
+             )
+         in
+         let table =
+           make ~elem_spec:(object%js
+             val className = !*"body-wrap"
+             val style = (object%js val backgroundColor = !*"#f6f6f6" end)
+           end) ~tag:`table [
+             Elem (make ~tag:`tr [
+                 Elem (make ~tag:`td []);
+                 Elem (make ~elem_spec:(object%js
+                         val className = !*"container"
+                         val style = (object%js
+                           val backgroundColor = !*"#FFFFFF"
+                         end)
+                       end)
+                         ~tag:`td ([
+                             mailing_list_header;
+                             Elem (make ~tag:`hr []);
+                           ] @ posts));
 
-        in
-        make ~tag:`html [ Elem head; Elem body ]
+               ])
+           ]
+         in
+         let footer_table =
+           let foot_message =
+             [
+               Text "This mailing list was generated \
+                     from json using OCaml bindings to ReactJS \
+                     and Nodejs. Improve it by sending a PR to: ";
+               Elem (make ~elem_spec:(object%js
+                       val href = !*"http://github.com/fxfactorial/ocaml-mailing-list"
+                     end) ~tag:`a [Text "ocaml-mailing-list"])
+             ]
+           in
+           let footer_content =
+             Elem (make ~tag:`table [
+                 Elem (make ~tag:`tr [
+                     Elem (make ~elem_spec:(object%js
+                             val style = (object%js
+                               val textAlign = !*"center"
+                             end)
+                           end) ~tag:`td [Elem (make ~tag:`p foot_message)])
+                   ])
+               ])
+           in
+           make ~elem_spec:(object%js val className = !*"footer-wrap" end)
+             ~tag:`table [
+             Elem (make ~tag:`tr [
+                 Elem (make ~tag:`td []);
+                 Elem (make
+                         ~elem_spec:(object%js
+                           val className = !*"container"
+                         end)
+                         ~tag:`td [
+                         Elem (make ~elem_spec:(object%js
+                                 val className = !*"content"
+                               end) ~tag:`div [footer_content])
+                       ])
+               ])
+           ]
+         in
+         let body =
+           make
+             ~elem_spec:(object%js
+               val style = (object%js val backgroundColor = !*"#f6f6f6" end)
+             end)
+             ~tag:`body [Elem table; Elem footer_table ]
+         in
+         make ~tag:`html [Elem head; Elem body]
       )|> create_class
   )
 
@@ -224,7 +278,7 @@ let () =
         "Must provide input json file of posts for HTML generation"
         |> prerr_endline;
         p#exit 1
-        end;
+      end;
 
       let posts_file = List.nth args 2 in
 
