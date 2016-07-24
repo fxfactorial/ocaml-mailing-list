@@ -191,3 +191,13 @@ let () =
 
     )
 ```
+
+# Contributions
+
+Please do contribute, especially if you can make it look prettier!
+
+# Acknowledgements
+
+I basically translated
+ [this](https://github.com/leemunroe/responsive-html-email-template)
+ into `React`.
