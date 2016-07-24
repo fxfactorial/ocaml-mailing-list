@@ -18,6 +18,12 @@ $ opam pin add -y nodejs https://github.com/fxfactorial/ocaml-nodejs
 Then a plain invocation of `make` should work and will build an
 example `index.html`.
 
+# Result 
+
+The generated example HTML should look like:
+
+![img](./newsletter_generated.png)
+
 # Source code
 
 ```ocaml
@@ -191,6 +197,7 @@ let () =
 
     )
 ```
+
 
 # Contributions
 
